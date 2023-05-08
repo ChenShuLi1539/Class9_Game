@@ -85,6 +85,9 @@ public class Game {
             case "陈思霖":
                 team.add(new Character_ChenSiLin(team, location), location);
                 break;
+            case "许珑川":
+                team.add(new Character_XuLongChuan(team, location), location);
+                break;
             default:
                 break;
         }

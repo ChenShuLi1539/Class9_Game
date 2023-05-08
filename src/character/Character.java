@@ -112,6 +112,11 @@ public class Character {
      */
     protected List<Buff> forbidSuccessPlusBuffs = new ArrayList<>();
 
+    /**
+     * 抵抗封印加算buff
+     */
+    protected List<Buff> forbidResistPlusBuffs = new ArrayList<>();
+
     protected Team team;
 
     protected int location;
@@ -149,6 +154,7 @@ public class Character {
         buffLists.add(damageBuffs);
         buffLists.add(forbidBuffs);
         buffLists.add(forbidSuccessPlusBuffs);
+        buffLists.add(forbidResistPlusBuffs);
 
     }
 
@@ -454,6 +460,14 @@ public class Character {
 
     public void setForbidSuccessPlusBuffs(List<Buff> forbidSuccessPlusBuffs) {
         this.forbidSuccessPlusBuffs = forbidSuccessPlusBuffs;
+    }
+
+    public List<Buff> getForbidResistPlusBuffs() {
+        return forbidResistPlusBuffs;
+    }
+
+    public void setForbidResistPlusBuffs(List<Buff> forbidResistPlusBuffs) {
+        this.forbidResistPlusBuffs = forbidResistPlusBuffs;
     }
 
     public Team getTeam() {

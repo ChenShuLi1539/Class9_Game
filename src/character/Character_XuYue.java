@@ -23,7 +23,7 @@ public class Character_XuYue extends Character{
         if (team.hasFallDownCharacter() && enoughCoin(5)) {
             skillThree();
         }
-        if (enoughCoin(8)) {
+        if (enoughCoin(7)) {
             skillFour();
         }
         if (Utils.random(35) && enoughCoin(4)) {
@@ -74,13 +74,18 @@ public class Character_XuYue extends Character{
     }
 
     /**
-     * 财政紧缩（主动） 8钱币
-     * 使对方全体下回合的MP消耗加倍
+     * 财政紧缩（主动） 7钱币
+     * 对对方全体使用，有75%的几率使目标下回合mp消耗加倍
      */
     private void skillFour() {
-        Utils.print(getName() + "使用了财政紧缩，使对方全体下回合MP消耗加倍了");
-        for (Character character : Utils.getAnotherTeam(this).getCharacterList()) {
-            Utils.addBuff(character.specialBuffs, new Buff("财政紧缩", 0, false, 2));
+        for (Character character : Utils.getAnotherTeam(this).getStillAlive()) {
+            if (Utils.calculateForbidSuccess(this, character, 75)) {
+                Utils.addBuff(character.getForbidBuffs(), new Buff("财政紧缩", 0, false, 2));
+                Utils.print(getName() + "对" + character.getName() + "成功使用了财政紧缩，使ta下回合MP消耗加倍了");
+            } else {
+                Utils.print(getName() + "对" + character.getName() + "使用了财政紧缩，但是失败了");
+            }
+
         }
     }
 

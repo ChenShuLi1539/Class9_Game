@@ -253,7 +253,7 @@ public class Utils {
         for (Buff buff : character.getForbidSuccessPlusBuffs()) {
             probability += buff.getValue();
         }
-        for (Buff buff : passive.getForbidSuccessPlusBuffs()) {
+        for (Buff buff : passive.getForbidResistPlusBuffs()) {
             probability += buff.getValue();
         }
         return random(probability);
