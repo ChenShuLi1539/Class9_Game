@@ -113,6 +113,24 @@ public class Team {
         return list;
     }
 
+    public List<Character> getNumCharacter(int num) {
+        List<Character> stillAlive = getStillAlive();
+        if (num >= stillAlive.size()) {
+            return stillAlive;
+        } else {
+            List<Integer> randomList = new ArrayList<>();
+            List<Character> characters = new ArrayList<>();
+            while (randomList.size() < num) {
+                int random = (int) (Math.random() * stillAlive.size());
+                if (!randomList.contains(random)) {
+                    randomList.add(random);
+                    characters.add(stillAlive.get(random));
+                }
+            }
+            return characters;
+        }
+    }
+
     public double getMyTeamHPPercent() {
         List<Character> list = getStillAlive();
         int current = 0;

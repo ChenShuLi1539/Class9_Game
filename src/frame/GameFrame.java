@@ -14,6 +14,10 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +74,8 @@ public class GameFrame extends JFrame {
 
     public int selectedCharacterNum = 0;
 
+    public float  resolution = 1;
+
     public static GameFrame getInstance() {
         if (instance == null) {
             instance = new GameFrame();
@@ -79,8 +85,20 @@ public class GameFrame extends JFrame {
 
     public GameFrame() throws HeadlessException {
         super("游戏界面");
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\resolution.txt"));
+            String currentLine = reader.readLine();
+            resolution = Float.parseFloat(currentLine);
+            reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1240, 980);
+        setSize((int) (1240 * resolution), (int) (980 * resolution));
         setVisible(true);
         setLayout(null);
 
@@ -95,11 +113,11 @@ public class GameFrame extends JFrame {
         jTabbedPane.setSelectedIndex(1);
 
         // TODO: 整个窗口加上滚动条，但是失败了
-        JScrollPane jScrollPane1 = new JScrollPane(jTabbedPane);
-        JScrollBar jScrollBar1 = jScrollPane1.getVerticalScrollBar();
-        jScrollBar1.setValue(jScrollBar1.getMaximum());
+//        JScrollPane jScrollPane1 = new JScrollPane(jTabbedPane);
+//        JScrollBar jScrollBar1 = jScrollPane1.getVerticalScrollBar();
+//        jScrollBar1.setValue(jScrollBar1.getMaximum());
 
-        setContentPane(jScrollPane1);
+        setContentPane(jTabbedPane);
     }
 
     private void gamePanelInit() {
@@ -119,9 +137,12 @@ public class GameFrame extends JFrame {
             gridView_2[i] = new CharacterPanel();
             tableLayout_2.add(gridView_2[i]);
         }
-        tableLayout_1.setBounds(40, 10, 450, 450);
-        tableLayout_2.setBounds(40, 500, 450, 450);
-        jScrollPane.setBounds(530, 10, 600, 900);
+        tableLayout_1.setBounds((int) (40 * resolution), (int) (10 * resolution),
+                (int) (450 * resolution), (int) (450 * resolution));
+        tableLayout_2.setBounds((int) (40 * resolution), (int) (500 * resolution),
+                (int) (450 * resolution), (int) (450 * resolution));
+        jScrollPane.setBounds((int) (530 * resolution), (int) (10 * resolution),
+                (int) (600 * resolution), (int) (900 * resolution));
         logPanel.add(log);
 
         gamePanel.add(tableLayout_1);
@@ -145,7 +166,8 @@ public class GameFrame extends JFrame {
                 + "  定位:" + CharacterDataUtils.list.get(0).getLocation()
                 + "<br/><br/>" + CharacterDataUtils.list.get(0).getDesc()
                 + "<html/>");
-        dataLabel.setBounds(400, 40, 500, 900);
+        dataLabel.setBounds((int) (400 * resolution), (int) (40 * resolution),
+                (int) (500 * resolution), (int) (900 * resolution));
 
         selectBox.addItemListener(new ItemListener() {
             @Override
@@ -167,7 +189,8 @@ public class GameFrame extends JFrame {
                 }
             }
         });
-        selectBox.setBounds(40, 450, 100, 70);
+        selectBox.setBounds((int) (40 * resolution), (int) (450 * resolution),
+                (int) (100 * resolution), (int) (70 * resolution));
 
         dataPanel.add(selectBox, BorderLayout.NORTH);
         dataPanel.add(dataLabel, BorderLayout.CENTER);
@@ -193,7 +216,7 @@ public class GameFrame extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int index = teamGridView_1_add_button.indexOf(jButton);
-                    if (selectedCharacterNum > 4) {
+                    if (selectedCharacterNum > 5) {
                         return;
                     }
                     if (characterList.getSelectedValue() != null) {
@@ -204,7 +227,7 @@ public class GameFrame extends JFrame {
                         listModel.remove(characterList.getSelectedIndex());
                         selectedCharacterNum++;
                     }
-                    if (selectedCharacterNum > 4) {
+                    if (selectedCharacterNum > 5) {
                         for (JButton button : teamGridView_1_add_button) {
                             button.setVisible(false);
                         }
@@ -229,7 +252,7 @@ public class GameFrame extends JFrame {
                     teamGridView_1_label.get(index).setVisible(false);
                     jButton1.setVisible(false);
                     selectedCharacterNum--;
-                    if (selectedCharacterNum < 5) {
+                    if (selectedCharacterNum < 6) {
                         for (int i = 0; i < 9; i++) {
                             if (!teamGridView_1_add_button.get(i).isVisible()
                                     && !teamGridView_1_remove_button.get(i).isVisible()) {
@@ -246,7 +269,7 @@ public class GameFrame extends JFrame {
         for (CharacterData characterData : CharacterDataUtils.list) {
             if (characterData.getName().equals("李可禛") || characterData.getName().equals("杨礼政") ||
                     characterData.getName().equals("许悦") || characterData.getName().equals("韦宗言") ||
-                    characterData.getName().equals("陈思霖")) {
+                    characterData.getName().equals("陈思霖") || characterData.getName().equals("程显雯")) {
                 continue;
             }
             listModel.addElement(characterData.getName());
@@ -259,6 +282,7 @@ public class GameFrame extends JFrame {
         teamGridView_2[4].add(new JLabel("许悦"));
         teamGridView_2[2].add(new JLabel("韦宗言"));
         teamGridView_2[5].add(new JLabel("陈思霖"));
+        teamGridView_2[3].add(new JLabel("程显雯"));
 
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -279,10 +303,14 @@ public class GameFrame extends JFrame {
             }
         });
 
-        teamTableLayout_1.setBounds(40, 10, 450, 450);
-        teamTableLayout_2.setBounds(40, 500, 450, 450);
-        characterList.setBounds(530, 10, 100, 450);
-        startButton.setBounds(530, 500, 200, 40);
+        teamTableLayout_1.setBounds((int) (40 * resolution), (int) (10 * resolution),
+                (int) (450 * resolution), (int) (450 * resolution));
+        teamTableLayout_2.setBounds((int) (40 * resolution), (int) (500 * resolution),
+                (int) (450 * resolution), (int) (450 * resolution));
+        characterList.setBounds((int) (530 * resolution), (int) (10 * resolution),
+                (int) (100 * resolution), (int) (450 * resolution));
+        startButton.setBounds((int) (530 * resolution), (int) (500 * resolution),
+                (int) (200 * resolution), (int) (40 * resolution));
 
         teamPanel.add(teamTableLayout_1);
         teamPanel.add(teamTableLayout_2);
@@ -317,6 +345,7 @@ public class GameFrame extends JFrame {
         Game.getInstance().setCharacter("许悦", false, 4);
         Game.getInstance().setCharacter("韦宗言", false, 6);
         Game.getInstance().setCharacter("陈思霖", false, 3);
+        Game.getInstance().setCharacter("程显雯", false, 5);
     }
 
     public static class CharacterPanel extends JPanel{
@@ -383,7 +412,7 @@ public class GameFrame extends JFrame {
                     + "MP:" + character.getCurrentMp() + " / " + character.getMaxMp() + "<br/>"
                     + "普通攻击力:" +
                         (int) (character.getNormalAtk() * Utils.calculateBuff(character.getNormalAtkBuffs())) + "<br/>"
-                    + "速度:" + (int) (character.getSpd() * Utils.calculateBuff(character.getSpdBuffs())) + "<br/>"
+                    + "速度:" + (int) Utils.calculateSpeed(character) + "<br/>"
                     + "护甲:" + Utils.calculateDefByPlus(character) + "<br/>"
                     + "魔抗:" + Utils.calculateMdfByPlus(character)
                     + "<br/><br/><html/>");

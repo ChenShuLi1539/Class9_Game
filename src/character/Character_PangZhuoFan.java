@@ -50,10 +50,7 @@ public class Character_PangZhuoFan extends Character{
      */
     private void skillTwo(int damage) {
         Utils.print(getName() + "通过造成伤害恢复了" + (int) (0.1 * damage * Utils.calculateBuff(getMpRecoverBuffs())) + "点MP");
-        currentMp += 0.1 * damage * Utils.calculateBuff(mpRecoverBuffs);
-        if (currentMp > maxMp) {
-            currentMp = maxMp;
-        }
+        Utils.mpRecoverCalculate(this, (int) (0.1 * damage));
     }
 
     /**

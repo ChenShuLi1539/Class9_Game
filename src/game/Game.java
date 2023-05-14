@@ -88,6 +88,15 @@ public class Game {
             case "许珑川":
                 team.add(new Character_XuLongChuan(team, location), location);
                 break;
+            case "甘宁达":
+                team.add(new Character_GanNingDa(team, location), location);
+                break;
+            case "马圆圆":
+                team.add(new Character_MaYuanYuan(team, location), location);
+                break;
+            case "周园佳":
+                team.add(new Character_ZhouYuanJia(team, location), location);
+                break;
             default:
                 break;
         }
@@ -120,7 +129,7 @@ public class Game {
                 continue;
             }
             double randomSpd = (Math.random() * 11 + 95) / 100;
-            double currentSpd = c.getSpd() * Utils.calculateBuff(c.getSpdBuffs()) * randomSpd;
+            double currentSpd = Utils.calculateSpeed(c) * randomSpd;
             double time = (1000 - c.getSpdRemain()) / currentSpd;
             if (time < shortestTime) {
                 shortestTime = time;

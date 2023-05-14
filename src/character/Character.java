@@ -117,6 +117,16 @@ public class Character {
      */
     protected List<Buff> forbidResistPlusBuffs = new ArrayList<>();
 
+    /**
+     * 暴击几率加算buff
+     */
+    protected List<Buff> criticalStrikePlusBuffs = new ArrayList<>();
+
+    /**
+     * 抵抗暴击几率加算buff
+     */
+    protected List<Buff> criticalStrikeResistPlusBuffs = new ArrayList<>();
+
     protected Team team;
 
     protected int location;
@@ -155,6 +165,8 @@ public class Character {
         buffLists.add(forbidBuffs);
         buffLists.add(forbidSuccessPlusBuffs);
         buffLists.add(forbidResistPlusBuffs);
+        buffLists.add(criticalStrikePlusBuffs);
+        buffLists.add(criticalStrikeResistPlusBuffs);
 
     }
 
@@ -167,10 +179,8 @@ public class Character {
         round += 1;
 
         // 回蓝
-        currentMp += 30 * Utils.calculateBuff(mpRecoverBuffs);
-        if (currentMp > maxMp) {
-            currentMp = maxMp;
-        }
+        Utils.mpRecoverCalculate(this, 30);
+
         Utils.print("");
         Utils.print(getName() + "开始ta的回合，当前是ta的第" + round + "回合，" + printState());
         // 速度储存量清0
@@ -470,6 +480,22 @@ public class Character {
         this.forbidResistPlusBuffs = forbidResistPlusBuffs;
     }
 
+    public List<Buff> getCriticalStrikePlusBuffs() {
+        return criticalStrikePlusBuffs;
+    }
+
+    public void setCriticalStrikePlusBuffs(List<Buff> criticalStrikePlusBuffs) {
+        this.criticalStrikePlusBuffs = criticalStrikePlusBuffs;
+    }
+
+    public List<Buff> getCriticalStrikeResistPlusBuffs() {
+        return criticalStrikeResistPlusBuffs;
+    }
+
+    public void setCriticalStrikeResistPlusBuffs(List<Buff> criticalStrikeResistPlusBuffs) {
+        this.criticalStrikeResistPlusBuffs = criticalStrikeResistPlusBuffs;
+    }
+
     public Team getTeam() {
         return team;
     }
@@ -495,7 +521,7 @@ public class Character {
     }
 
     public int getHPPercent() {
-        return 100* getCurrentHp() / getMaxHp();
+        return 100 * getCurrentHp() / getMaxHp();
     }
 
     public int getLoseHPPercent() {

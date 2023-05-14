@@ -52,6 +52,8 @@ public class Utils {
                 break;
             }
         }
+        boolean isCriticalStrike = calculateCriticalStrikeSuccess(main, passive);
+        String criticalStrikeStr = "";
         int damage;
         if (!hasBuff(main, "灵动智慧")) {
             damage = (int) (2 * main.getNormalAtk() * calculateBuff(main.getNormalAtkBuffs()) * 100 *
@@ -62,8 +64,12 @@ public class Utils {
                     calculateBuff(passive.getReduceMatBuffs()) * calculateBuff(main.getDamageBuffs()) /
                         (calculateMdfByPlus(passive) * calculateBuff(passive.getMdfBuffs()) + 150));
         }
+        if (isCriticalStrike) {
+            damage *= 1.75;
+            criticalStrikeStr = "打出了暴击！！";
+        }
         damage = calculateHPMinus(passive, damage, main);
-        print(main.getName() + "对" + passive.getName() + "普通攻击造成了" + damage + "点伤害，" +
+        print(main.getName() + criticalStrikeStr + "对" + passive.getName() + "普通攻击造成了" + damage + "点伤害，" +
                 passive.getName() + "剩余" + passive.getCurrentHp() + "点HP");
         if (hasBuff(main, "革新") && passive.getCurrentHp() > 0) {
             print(main.getName() + "的革新追加了伤害");
@@ -75,11 +81,17 @@ public class Utils {
 
     public static void attackCalculate(Character main, Character passive, int damage) {
         main.beforeAttack(main, passive);
+        boolean isCriticalStrike = calculateCriticalStrikeSuccess(main, passive);
+        String criticalStrikeStr = "";
         damage = (int) (damage * calculateBuff(main.getAtkBuffs()) * 150 *
                 calculateBuff(passive.getReduceAtkBuffs()) * calculateBuff(main.getDamageBuffs()) /
                         (calculateDefByPlus(passive) * calculateBuff(passive.getDefBuffs()) + 150));
+        if (isCriticalStrike) {
+            damage *= 1.75;
+            criticalStrikeStr = "打出了暴击！！";
+        }
         damage = calculateHPMinus(passive, damage, main);
-        print(main.getName() + "对" + passive.getName() + "造成了" + damage + "点物理伤害，" +
+        print(main.getName() + criticalStrikeStr + "对" + passive.getName() + "造成了" + damage + "点物理伤害，" +
                 passive.getName() + "剩余" + passive.getCurrentHp() + "点HP");
         main.afterAttack(main, passive, FROM_ATTACK, damage);
         passive.afterAttack(main, passive, FROM_ATTACK, damage);
@@ -87,11 +99,17 @@ public class Utils {
 
     public static void magicAttackCalculate(Character main, Character passive, int damage) {
         main.beforeAttack(main, passive);
+        boolean isCriticalStrike = calculateCriticalStrikeSuccess(main, passive);
+        String criticalStrikeStr = "";
         damage = (int) (damage * calculateBuff(main.getMatBuffs()) * 150 *
                 calculateBuff(passive.getReduceMatBuffs()) * calculateBuff(main.getDamageBuffs()) /
                 (calculateMdfByPlus(passive) * calculateBuff(passive.getMdfBuffs()) + 150));
+        if (isCriticalStrike) {
+            damage *= 1.75;
+            criticalStrikeStr = "打出了暴击！！";
+        }
         damage = calculateHPMinus(passive, damage, main);
-        print(main.getName() + "对" + passive.getName() + "造成了" + damage + "点魔法伤害，" +
+        print(main.getName() + criticalStrikeStr + "对" + passive.getName() + "造成了" + damage + "点魔法伤害，" +
                 passive.getName() + "剩余" + passive.getCurrentHp() + "点HP");
         main.afterAttack(main, passive, FROM_MAGIC_ATTACK, damage);
         passive.afterAttack(main, passive, FROM_MAGIC_ATTACK, damage);
@@ -100,6 +118,7 @@ public class Utils {
     public static void trueAttackCalculate(Character main, Character passive, int damage) {
         main.beforeAttack(main, passive);
         damage *= calculateBuff(main.getDamageBuffs());
+        // 穿透伤害不会暴击
         damage = calculateHPMinus(passive, damage, main);
         print(main.getName() + "对" + passive.getName() + "造成了" + damage + "点穿透伤害，" +
                 passive.getName() + "剩余" + passive.getCurrentHp() + "点HP");
@@ -133,7 +152,7 @@ public class Utils {
     }
 
     public static void cureCalculate(Character main, Character passive, int value) {
-        value *= calculateBuff(passive.getHpRecoverBuffs());
+        value *= calculateHPRecover(passive);
         if (value + passive.getCurrentHp() > passive.getMaxHp()) {
             value = passive.getMaxHp() - passive.getCurrentHp();
         }
@@ -148,7 +167,7 @@ public class Utils {
         }
         for (Character character : getAllStillAlive()) {
             if (hasBuff(character, "争强好胜")) {
-                int cureValue = (int) (50 * calculateBuff(character.getHpRecoverBuffs()));
+                int cureValue = (int) (50 * calculateHPRecover(character));
                 if (cureValue + character.getCurrentHp() > character.getMaxHp()) {
                     cureValue = character.getMaxHp() - character.getCurrentHp();
                 }
@@ -164,6 +183,30 @@ public class Utils {
             percent *= buff.getValue();
         }
         return percent;
+    }
+
+    public static double calculateSpeed(Character character) {
+        double multiplier = calculateBuff(character.getSpdBuffs());
+        if (multiplier > 1.0 && hasBuff(character, "如虎添翼")) {
+            multiplier *= 1.15;
+        }
+        return character.getSpd() * multiplier;
+    }
+
+    public static double calculateHPRecover(Character character) {
+        double multiplier = calculateBuff(character.getHpRecoverBuffs());
+        if (multiplier > 0.3 && hasBuff(character, "波谲云诡")) {
+            multiplier = 0.3;
+        }
+        return multiplier;
+    }
+
+    public static void mpRecoverCalculate(Character character, int value) {
+        character.setCurrentMp(
+                (int) (character.getCurrentMp() + value * Utils.calculateBuff(character.getMpRecoverBuffs())));
+        if (character.getCurrentMp() > character.getMaxMp()) {
+            character.setCurrentMp(character.getMaxMp());
+        }
     }
 
     public static boolean hasBuff(Character character, String name) {
@@ -254,9 +297,24 @@ public class Utils {
             probability += buff.getValue();
         }
         for (Buff buff : passive.getForbidResistPlusBuffs()) {
-            probability += buff.getValue();
+            probability -= buff.getValue();
         }
         return random(probability);
+    }
+
+    public static boolean calculateCriticalStrikeSuccess(Character character, Character passive) {
+        int probability = 3; // 基础暴击率3点
+        for (Buff buff : character.getCriticalStrikePlusBuffs()) {
+            probability += buff.getValue();
+        }
+        for (Buff buff : passive.getCriticalStrikeResistPlusBuffs()) {
+            probability -= buff.getValue();
+        }
+        return random(probability);
+    }
+
+    public static boolean isForbidden(Character character) {
+        return character.getForbidBuffs().size() > 0;
     }
 
     public static void print(String str) {

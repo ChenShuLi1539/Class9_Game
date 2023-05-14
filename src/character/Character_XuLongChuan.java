@@ -75,7 +75,7 @@ public class Character_XuLongChuan extends Character{
             if (character.getCurrentHp() > 0) {
                 Utils.print(getName() + "对" + character.getName() + "使用了一往无前，降低了ta的抵抗封印几率");
                 Utils.magicAttackCalculate(this, character, 95);
-                Utils.addBuff(character.getForbidResistPlusBuffs(), new Buff("一往无前", 10, false, 3));
+                Utils.addBuff(character.getForbidResistPlusBuffs(), new Buff("一往无前", -10, false, 3));
             }
         }
     }
@@ -85,25 +85,9 @@ public class Character_XuLongChuan extends Character{
      * 降低对方随机三个目标40%的治疗效果两回合
      */
     public void skillFour() {
-        List<Character> team = Utils.getAnotherTeam(this).getStillAlive();
-        if (team.size() <= 3) {
-            for (Character character : team) {
-                Utils.print(getName() + "变幻莫测，降低了" + character.getName() + "的受治疗效果");
-                Utils.addBuff(character.getHpRecoverBuffs(), new Buff("九变十化", 0.6, false, 3));
-            }
-        } else {
-            List<Integer> randomList = new ArrayList<>();
-            while (randomList.size() < 3) {
-                int random = (int) (Math.random() * team.size());
-                if (!randomList.contains(random)) {
-                    randomList.add(random);
-                }
-            }
-            for (Integer i : randomList) {
-                Character character = team.get(i);
-                Utils.print(getName() + "变幻莫测，降低了" + character.getName() + "的受治疗效果");
-                Utils.addBuff(character.getHpRecoverBuffs(), new Buff("九变十化", 0.6, false, 3));
-            }
+        for (Character character : Utils.getAnotherTeam(this).getNumCharacter(3)) {
+            Utils.print(getName() + "变幻莫测，降低了" + character.getName() + "的受治疗效果");
+            Utils.addBuff(character.getHpRecoverBuffs(), new Buff("九变十化", 0.6, false, 3));
         }
     }
 }

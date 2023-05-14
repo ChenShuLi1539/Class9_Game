@@ -64,27 +64,10 @@ public class Character_WeiZongYan extends Character{
      * 对对方随机4个目标造成1.4*（你的普通攻击力）的物理伤害
      */
     private void skillFour() {
-        List<Character> team = Utils.getAnotherTeam(this).getStillAlive();
-        if (team.size() <= 4) {
-            for (Character character : team) {
-                Utils.print(getName() + "对" + character.getName() + "使用了千帆竞发");
-                Utils.attackCalculate(this, character,
-                        (int) (1.4 * getNormalAtk() * Utils.calculateBuff(normalAtkBuffs)));
-            }
-        } else {
-            List<Integer> randomList = new ArrayList<>();
-            while (randomList.size() < 4) {
-                int random = (int) (Math.random() * team.size());
-                if (!randomList.contains(random)) {
-                    randomList.add(random);
-                }
-            }
-            for (Integer i : randomList) {
-                Character character = team.get(i);
-                Utils.print(getName() + "对" + character.getName() + "使用了千帆竞发");
-                Utils.attackCalculate(this, character,
-                        (int) (1.4 * getNormalAtk() * Utils.calculateBuff(normalAtkBuffs)));
-            }
+        for (Character character : Utils.getAnotherTeam(this).getNumCharacter(4)) {
+            Utils.print(getName() + "对" + character.getName() + "使用了千帆竞发");
+            Utils.attackCalculate(this, character,
+                    (int) (1.4 * getNormalAtk() * Utils.calculateBuff(normalAtkBuffs)));
         }
     }
 }

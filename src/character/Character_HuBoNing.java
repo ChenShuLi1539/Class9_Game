@@ -60,32 +60,14 @@ public class Character_HuBoNing extends Character{
 
     /**
      * 不学无术（主动） 130MP
-     * 对对方任意两个目标造成50+（对方普通攻击力）的魔法伤害，并降低对方10%的物理伤害
+     * 对对方任意两个目标造成50+（对方普通攻击力）的魔法伤害，并降低对方50%的物理伤害
      */
     private void skillFour() {
-        List<Character> team = Utils.getAnotherTeam(this).getStillAlive();
-        if (team.size() <= 2) {
-            for (Character character : team) {
-                Utils.print(getName() + "对" + character.getName() + "使用不学无术，降低了ta的物理伤害");
-                Utils.magicAttackCalculate(this, character,
-                        (int) (50 + (character.getNormalAtk() * Utils.calculateBuff(character.getNormalAtkBuffs()))));
-                Utils.addBuff(character.getReduceAtkBuffs(), new Buff("不学无术", 0.9, false, 2));
-            }
-        } else {
-            List<Integer> randomList = new ArrayList<>();
-            while (randomList.size() < 2) {
-                int random = (int) (Math.random() * team.size());
-                if (!randomList.contains(random)) {
-                    randomList.add(random);
-                }
-            }
-            for (Integer i : randomList) {
-                Character character = team.get(i);
-                Utils.print(getName() + "对" + character.getName() + "使用不学无术，降低了ta的物理伤害");
-                Utils.magicAttackCalculate(this, character,
-                        (int) (50 + (character.getNormalAtk() * Utils.calculateBuff(character.getNormalAtkBuffs()))));
-                Utils.addBuff(character.getReduceAtkBuffs(), new Buff("不学无术", 0.9, false, 2));
-            }
+        for (Character character : Utils.getAnotherTeam(this).getNumCharacter(2)) {
+            Utils.print(getName() + "对" + character.getName() + "使用不学无术，降低了ta的物理伤害");
+            Utils.magicAttackCalculate(this, character,
+                    (int) (50 + (character.getNormalAtk() * Utils.calculateBuff(character.getNormalAtkBuffs()))));
+            Utils.addBuff(character.getReduceAtkBuffs(), new Buff("不学无术", 0.5, false, 2));
         }
     }
 }

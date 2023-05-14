@@ -64,25 +64,9 @@ public class Character_LiKeZhen extends Character{
      * 减少场上任意两人的30魔抗至他们的回合开始
      */
     private void skillThree() {
-        List<Character> team = Utils.getAnotherTeam(this).getStillAlive();
-        if (team.size() <= 2) {
-            for (Character character : team) {
-                Utils.print(getName() + "对" + character.getName() + "使用质问，减少了ta的魔抗");
-                Utils.addBuff(character.getPlusMdfBuffs(), new Buff("质问", -30, false, 1));
-            }
-        } else {
-            List<Integer> randomList = new ArrayList<>();
-            while (randomList.size() < 2) {
-                int random = (int) (Math.random() * team.size());
-                if (!randomList.contains(random)) {
-                    randomList.add(random);
-                }
-            }
-            for (Integer i : randomList) {
-                Character character = team.get(i);
-                Utils.print(getName() + "对" + character.getName() + "使用质问，减少了ta的魔抗");
-                Utils.addBuff(character.getPlusMdfBuffs(), new Buff("质问", -30, false, 1));
-            }
+        for (Character character : Utils.getAnotherTeam(this).getNumCharacter(2)) {
+            Utils.print(getName() + "对" + character.getName() + "使用质问，减少了ta的魔抗");
+            Utils.addBuff(character.getPlusMdfBuffs(), new Buff("质问", -30, false, 1));
         }
     }
 

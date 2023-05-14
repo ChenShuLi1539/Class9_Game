@@ -59,25 +59,9 @@ public class Character_WeiChengYang extends Character{
      * 对对方随机三个目标造成110点物理伤害，并提高你10%的速度一回合
      */
     private void skillThree() {
-        List<Character> team = Utils.getAnotherTeam(this).getStillAlive();
-        if (team.size() <= 3) {
-            for (Character character : team) {
-                Utils.print(getName() + "对" + character.getName() + "使用了残影");
-                Utils.attackCalculate(this, character, 110);
-            }
-        } else {
-            List<Integer> randomList = new ArrayList<>();
-            while (randomList.size() < 3) {
-                int random = (int) (Math.random() * team.size());
-                if (!randomList.contains(random)) {
-                    randomList.add(random);
-                }
-            }
-            for (Integer i : randomList) {
-                Character character = team.get(i);
-                Utils.print(getName() + "对" + character.getName() + "使用了残影");
-                Utils.attackCalculate(this, character, 110);
-            }
+        for (Character character : Utils.getAnotherTeam(this).getNumCharacter(3)) {
+            Utils.print(getName() + "对" + character.getName() + "使用了残影");
+            Utils.attackCalculate(this, character, 110);
         }
         Utils.print(getName() + "的速度提高了");
         Utils.addBuff(getSpdBuffs(), new Buff("残影", 1.1, false, 1));
